@@ -6,7 +6,8 @@
   "scripts": {
     "build": "node generate",
     "prepublish": "npm run build",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "drop-cache": "rm -rf tmp",
+    "test": "npm run drop-cache && npm run build"
   },
   "files": [
     "icon"

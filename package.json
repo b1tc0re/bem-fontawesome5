@@ -1,0 +1,38 @@
+{
+  "name": "bem-fontawesome5",
+  "version": "0.0.1",
+  "description": "Font Awesome icons extracted as SVG in BEM notation",
+  "main": "generate.js",
+  "scripts": {
+    "build": "node generate",
+    "prepublish": "npm run build",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "files": [
+    "icon"
+  ],
+  "keywords": [
+    "bem",
+    "fontawesome5",
+    "fa"
+  ],
+  "homepage": "https://github.com/b1tc0re/bem-fontawesome5",
+  "bugs": {
+    "url": "https://github.com/b1tc0re/bem-fontawesome5/issues/new"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/b1tc0re/bem-fontawesome5.git"
+  },
+  "engines": {
+    "node": ">=4"
+  },
+  "author": "b1tc0re <b1tc0re@yandex.ru>",
+  "license": "MIT",
+  "devDependencies": {
+    "@fortawesome/fontawesome-free": "^5.1.0",
+    "font-blast": "^0.7.0",
+    "mv": "^2.1.1",
+    "postcss": "^6.0.23"
+  }
+}

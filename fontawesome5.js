@@ -44,8 +44,6 @@ module.exports = {
         var that = this;
         that.blockWithModName = this.block + '_' + this.background;
 
-        console.debug('Initialize font-awesome generator');
-
         this.createBlockStructure();
         this.fontawesomePath = PATH.join('node_modules', '@fortawesome/fontawesome-free');
 

@@ -1,9 +1,11 @@
 # bem-font-awesome5
 
-[Font Awesome](https://fontawesome.com/) icons extracted as SVG in BEM notation.
-
 [![Build Status](https://travis-ci.org/b1tc0re/bem-fontawesome5.svg?branch=master)](https://travis-ci.org/b1tc0re/bem-fontawesome5)
 ![](https://david-dm.org/b1tc0re/bem-fontawesome5.svg)
+
+[Font Awesome](https://fontawesome.com/) icons extracted as SVG in BEM notation.
+
+[Font Awesome 4.7.0](https://github.com/tadatuta/bem-font-awesome-icons) icons extracted as SVG in BEM notation.
 
 ## Content
 

@@ -67,5 +67,5 @@ You're done :)
 
 ### BEMJSON
 ```js
-{ block: 'icon', mods: { bg: '500px' } }
-{ block: 'icon', mods: { glyph: '500px' } }
+{ block: 'icon', mods: { bg: 'address-book' } } // style solid
+{ block: 'icon', mods: { glyph: 'far-address-book' } } // style regular

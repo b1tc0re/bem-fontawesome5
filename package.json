@@ -6,7 +6,7 @@
   "scripts": {
     "build": "node generate",
     "prepublish": "npm run build",
-    "drop-cache": "rm -rf tmp",
+    "drop-cache": "rm -rf icon",
     "test": "npm run drop-cache && npm run build"
   },
   "files": [
@@ -32,8 +32,6 @@
   "license": "MIT",
   "devDependencies": {
     "@fortawesome/fontawesome-free": "^5.1.0",
-    "font-blast": "^0.7.0",
-    "mv": "^2.1.1",
-    "postcss": "^6.0.23"
+    "fs-extra": "^7.0.0"
   }
 }

@@ -1,9 +1,8 @@
 const PATH = require('path'),
-    FS = require('fs'),
-    TPL = require('./templates'),
-    POSTCSS = require('postcss'),
-    FONTBLAST = require('font-blast'),
-    MV = require('mv');
+      FS = require('fs'),
+      TPL = require('./templates'),
+      FSX = require('fs-extra');
+
 
 module.exports = {
 
@@ -22,87 +21,38 @@ module.exports = {
      */
     background  : 'bg',
 
-    /**
-     * Block name with mod
-     */
-    blockWithModName : null,
-
-    /**
-     * .fa-clock-o:before
-     */
-    pattern     : /\.fa\-(.+)\:before/,
-
-    /**
-     * Путь к файлам font-awesome
-     */
-    fontawesomePath      : null,
-
-    glyphToEntityMap : {},
-    entityToGlyphMap : {},
-
-    initialize : function () {
+    
+    initialize: function () {
         var that = this;
-        that.blockWithModName = this.block + '_' + this.background;
+        var fontAwesomePathBrand = PATH.join('node_modules', '@fortawesome/fontawesome-free/svgs/brands'),
+            fontAwesomePathRegular = PATH.join('node_modules', '@fortawesome/fontawesome-free/svgs/regular'),
+            fontAwesomePathSolid = PATH.join('node_modules', '@fortawesome/fontawesome-free/svgs/solid');
 
-        this.createBlockStructure();
-        this.fontawesomePath = PATH.join('node_modules', '@fortawesome/fontawesome-free');
+        that.createBlockStructure();
 
-        var cssContent = FS.readFileSync(PATH.join(this.fontawesomePath, 'css', 'fontawesome.css'), 'utf8');
+        // FontAwesome - brands
+        FS.readdirSync(fontAwesomePathBrand).forEach(fileName => {
 
-        POSTCSS([this.faPlugin()]).process(cssContent).then(result => {
+            that.createAndCopy(fileName, 'fab-', PATH.join(fontAwesomePathBrand, fileName));
+        });
 
-            FONTBLAST(PATH.join(that.fontawesomePath, 'webfonts', 'fa-solid-900.svg'), 'tmp', { filenames: that.glyphToEntityMap });
-            FONTBLAST(PATH.join(that.fontawesomePath, 'webfonts', 'fa-brands-400.svg'), 'tmp', { filenames: that.glyphToEntityMap });
-            FONTBLAST(PATH.join(that.fontawesomePath, 'webfonts', 'fa-regular-400.svg'), 'tmp', { filenames: that.glyphToEntityMap });
+        // FontAwesome - regular
+        FS.readdirSync(fontAwesomePathRegular).forEach(fileName => {
+            var svgContent = FS.readFileSync(PATH.join(fontAwesomePathRegular, fileName), 'utf8');
+            that.createAndCopy(fileName, 'far-', svgContent);
+        });
 
-            const readGlyphs = {};
-
-            Promise.all(Object.keys(that.entityToGlyphMap).map(entity => {
-                const glyphId = that.entityToGlyphMap[entity];
-                const filename = that.glyphToEntityMap[glyphId] + '.svg';
-                const modVal = entity.split('_').pop();
-
-                var svgContent = '';
-
-                if( FS.existsSync(PATH.join('tmp', 'svg', filename)) ) {
-                    svgContent = readGlyphs[filename] = FS.readFileSync(PATH.join('tmp', 'svg', filename), 'utf8');
-                }
-                else
-                {
-                    var tmpFS = filename.replace('icon_bg_', '');
-
-                    if( FS.existsSync(PATH.join(that.fontawesomePath, 'svgs/brands', tmpFS)) ) {
-                        svgContent = readGlyphs[filename] = FS.readFileSync(PATH.join(that.fontawesomePath, 'svgs/brands', tmpFS), 'utf8');
-                    } else if( FS.existsSync(PATH.join(that.fontawesomePath, 'svgs/regular', tmpFS)) ) {
-                        svgContent = readGlyphs[filename] = FS.readFileSync(PATH.join(that.fontawesomePath, 'svgs/regular', tmpFS), 'utf8');
-                    } else if( FS.existsSync(PATH.join(that.fontawesomePath, 'svgs/solid', tmpFS)) ) {
-                        svgContent = readGlyphs[filename] = FS.readFileSync(PATH.join(that.fontawesomePath, 'svgs/solid', tmpFS), 'utf8');
-                    } else {
-                        return ;
-                    }
-
-                }
-
-                FS.writeFileSync(PATH.join(that.block, '_' + that.glyph, that.block + '_' + that.glyph + '_' + modVal + '.bemhtml.js'),
-                    TPL.initialize(that.glyph).bemhtml(modVal, svgContent));
-
-                FS.writeFileSync(PATH.join(that.block, '_' + that.glyph, that.block + '_' + that.glyph + '_' + modVal + '.bh.php'),
-                    TPL.initialize(that.glyph).bhPhp(modVal, svgContent));
-
-                FS.writeFileSync(PATH.join(that.block, '_' + that.glyph, that.block + '_' + that.glyph + '_' + modVal + '.bh.js'),
-                    TPL.initialize(that.glyph).bhJs(modVal, svgContent));
-
-                return MV(PATH.join('tmp', 'svg', filename), PATH.join(__dirname, that.block, '_' + that.background, filename), err => {
-                    if (err && err.code !== 'ENOENT') console.error(err);
-                });
-            }));
+        // FontAwesome - solid
+        FS.readdirSync(fontAwesomePathSolid).forEach(fileName => {
+            var svgContent = FS.readFileSync(PATH.join(fontAwesomePathSolid, fileName), 'utf8');
+            that.createAndCopy(fileName, '', svgContent);
         });
     },
 
     /**
      * Create structure mods
      */
-    createBlockStructure : function () {
+    createBlockStructure: function () {
 
         FS.existsSync(this.block) || FS.mkdirSync(this.block);
 
@@ -118,46 +68,73 @@ module.exports = {
     },
 
     /**
-     * Post css plugin
-     * @return {postcss.Plugin<any>}
+     * Create glyph file template
+     *
+     * @param fileName
+     * @param prefix
+     * @param realPath
      */
-    faPlugin : function () {
-        var that = this;
+    createAndCopy: function(fileName, prefix, realPath) {
 
-        return POSTCSS.plugin('fa', function(options = {}) {
-            return function(css) {
-                css.walkRules(function(rule) {
-                    const selectors = rule.selector.split(',');
+        var modVal = prefix + fileName.replace('.svg', ''),
+            blockWithMod = 'icon_' + this.background,
+            content = FS.readFileSync(realPath, 'utf8'),
+            pathGlyph = PATH.join(this.block, '_' + this.glyph, this.block + '_' + this.glyph + '_' + modVal);
 
-                    let firstParsedModVal;
+        this.createGlyphPath(pathGlyph, modVal, this.normalizeContent(content));
 
-                    selectors.forEach(selector => {
-                        const parsedSelector = that.pattern.exec(selector);
 
-                        if (!parsedSelector) return;
+        const styleArr = [
+            '.' + blockWithMod + '_' + modVal + ' {',
+            "\n\tbackground-image: url(" + this.block + '_' + this.background + '_' + modVal + ".svg);",
+            "\n}"
+        ];
 
-                        const modVal = parsedSelector[1];
-                        firstParsedModVal || (firstParsedModVal = modVal);
+        //var pathToBg = PATH.join(this.block, '_' + this.background, this.block + '_' + this.background + '_' + modVal + '.css');
+        //FS.writeFileSync(pathToBg, styleArr.join(''));
 
-                        const styleArr = [
-                            '.' + that.blockWithModName + '_' + modVal + ' {'
-                        ];
+        FS.writeFileSync(PATH.join(this.block, '_' + this.background, this.block + '_' + this.background + '_' + modVal + '.css'), styleArr.join(''));
+        this.copyFile(realPath, PATH.join(this.block, '_' + this.background, this.block + '_' + this.background +'_' + modVal + ".svg"));
+    },
 
-                        rule.walkDecls(function(decl, i) {
-                            const glyphId = decl.value.slice(2, decl.value.length - 1);
 
-                            that.glyphToEntityMap[glyphId] = that.blockWithModName + '_' + firstParsedModVal;
-                            that.entityToGlyphMap[that.blockWithModName + '_' + modVal] = glyphId;
+    /**
+     * Create glyph files
+     *
+     * @param glyphPath
+     * @param modVal
+     * @param svgContent
+     */
+    createGlyphPath: function (glyphPath, modVal, svgContent) {
+        FS.writeFileSync(glyphPath + '.bemhtml.js', TPL.initialize(this.glyph).bemhtml(modVal, svgContent));
+        FS.writeFileSync(glyphPath + '.bh.php', TPL.initialize(this.glyph).bhJs(modVal, svgContent));
+        FS.writeFileSync(glyphPath + '.bh.js', TPL.initialize(this.glyph).bhPhp(modVal, svgContent));
+    },
 
-                            styleArr.push(decl.raws.before + "\n  background-image: url(" + that.blockWithModName + '_' + firstParsedModVal + '.svg);');
-                        });
+    /**
+     * Copy file source to target
+     *
+     * @param source
+     * @param target
+     */
+    copyFile : function (source, target) {
+        FSX.copySync(source, target);
+    },
 
-                        styleArr.push('\n}');
+    /**
+     * Normalize content
+     * @param content
+     * @returns {string}
+     */
+    normalizeContent : function (content) {
+        var COMMENT_PSEUDO_COMMENT_OR_LT_BANG = new RegExp(
+            '<!--[\\s\\S]*?(?:-->)?'
+            + '<!---+>?'  // A comment with no body
+            + '|<!(?![dD][oO][cC][tT][yY][pP][eE]|\\[CDATA\\[)[^>]*>?'
+            + '|<[?][^>]*>?',  // A pseudo-comment
+            'g');
 
-                        FS.writeFileSync(PATH.join(that.block, '_' + that.background, that.blockWithModName + '_' + modVal + '.css'), styleArr.join(''));
-                    });
-                });
-            }
-        });
+        return content.replace(COMMENT_PSEUDO_COMMENT_OR_LT_BANG, '').replace("\n", "");
     }
+    
 };

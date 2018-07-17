@@ -18,16 +18,16 @@ icon/
     _bg/
         icon_bg_500px.css
         icon_bg_500px.svg
-        icon_bg_address-book-o.css
-        icon_bg_address-book-o.svg
+        icon_bg_far-address-book.css
+        icon_bg_far-address-book.svg
         # and so on
     _glyph/
         icon_glyph_500px.bemhtml.js
         icon_glyph_500px.bh.js
         icon_glyph_500px.bh.php
-        icon_glyph_address-book-o.bemhtml.js
-        icon_glyph_address-book-o.bh.js
-        icon_glyph_address-book-o.bh.php
+        icon_glyph_far-address.bemhtml.js
+        icon_glyph_far-address.bh.js
+        icon_glyph_far-address.bh.php
         # and so on
 ```
 
@@ -68,4 +68,6 @@ You're done :)
 ### BEMJSON
 ```js
 { block: 'icon', mods: { bg: 'address-book' } } // style solid
+{ block: 'icon', mods: { bg: 'far-address-book' } } // style solid
+{ block: 'icon', mods: { glyph: 'address-book' } } // style regular
 { block: 'icon', mods: { glyph: 'far-address-book' } } // style regular

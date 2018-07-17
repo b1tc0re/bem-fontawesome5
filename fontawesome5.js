@@ -1,7 +1,6 @@
 const PATH = require('path'),
       FS = require('fs'),
-      TPL = require('./templates'),
-      MV = require('mv');
+      TPL = require('./templates');
 
 
 module.exports = {

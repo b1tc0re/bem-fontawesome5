@@ -1,6 +1,6 @@
 {
   "name": "bem-fontawesome5",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "description": "Font Awesome icons extracted as SVG in BEM notation",
   "main": "generate.js",
   "scripts": {
@@ -31,7 +31,6 @@
   "author": "b1tc0re <b1tc0re@yandex.ru>",
   "license": "MIT",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.1.0",
-    "fs-extra": "^7.0.0"
+    "@fortawesome/fontawesome-free": "^5.1.0"
   }
 }

@@ -1,7 +1,7 @@
 const PATH = require('path'),
       FS = require('fs'),
       TPL = require('./templates'),
-      FSX = require('fs-extra');
+      MV = require('mv');
 
 
 module.exports = {
@@ -38,14 +38,12 @@ module.exports = {
 
         // FontAwesome - regular
         FS.readdirSync(fontAwesomePathRegular).forEach(fileName => {
-            var svgContent = FS.readFileSync(PATH.join(fontAwesomePathRegular, fileName), 'utf8');
-            that.createAndCopy(fileName, 'far-', svgContent);
+            that.createAndCopy(fileName, 'far-', PATH.join(fontAwesomePathRegular, fileName));
         });
 
         // FontAwesome - solid
         FS.readdirSync(fontAwesomePathSolid).forEach(fileName => {
-            var svgContent = FS.readFileSync(PATH.join(fontAwesomePathSolid, fileName), 'utf8');
-            that.createAndCopy(fileName, '', svgContent);
+            that.createAndCopy(fileName, '', PATH.join(fontAwesomePathSolid, fileName));
         });
     },
 
@@ -78,10 +76,10 @@ module.exports = {
 
         var modVal = prefix + fileName.replace('.svg', ''),
             blockWithMod = 'icon_' + this.background,
-            content = FS.readFileSync(realPath, 'utf8'),
+            content = this.normalizeContent(FS.readFileSync(realPath, 'utf8')),
             pathGlyph = PATH.join(this.block, '_' + this.glyph, this.block + '_' + this.glyph + '_' + modVal);
 
-        this.createGlyphPath(pathGlyph, modVal, this.normalizeContent(content));
+        this.createGlyphPath(pathGlyph, modVal, content);
 
 
         const styleArr = [
@@ -94,6 +92,8 @@ module.exports = {
         //FS.writeFileSync(pathToBg, styleArr.join(''));
 
         FS.writeFileSync(PATH.join(this.block, '_' + this.background, this.block + '_' + this.background + '_' + modVal + '.css'), styleArr.join(''));
+
+        //this.copyFile(PATH.join(this.block, '_' + this.background, this.block + '_' + this.background +'_' + modVal + ".svg"), content);
         this.copyFile(realPath, PATH.join(this.block, '_' + this.background, this.block + '_' + this.background +'_' + modVal + ".svg"));
     },
 
@@ -118,7 +118,7 @@ module.exports = {
      * @param target
      */
     copyFile : function (source, target) {
-        FSX.copySync(source, target);
+        FS.createReadStream(source).pipe(FS.createWriteStream(target));
     },
 
     /**

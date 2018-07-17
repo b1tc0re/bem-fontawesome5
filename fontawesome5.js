@@ -32,7 +32,7 @@ module.exports = {
         // FontAwesome - brands
         FS.readdirSync(fontAwesomePathBrand).forEach(fileName => {
 
-            that.createAndCopy(fileName, 'fab-', PATH.join(fontAwesomePathBrand, fileName));
+            that.createAndCopy(fileName, '', PATH.join(fontAwesomePathBrand, fileName));
         });
 
         // FontAwesome - regular

@@ -1,2 +1,8 @@
-icon
-node_modules
+icon/
+node_modules/
+.DS_Store
+.idea/
+*.iml
+.project
+.svn
+npm-debug.log

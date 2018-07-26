@@ -31,6 +31,6 @@
   "author": "b1tc0re <b1tc0re@yandex.ru>",
   "license": "MIT",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.1.0"
+    "@fortawesome/fontawesome-free": "^5.2.0"
   }
 }

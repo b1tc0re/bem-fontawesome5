@@ -31,7 +31,6 @@ module.exports = {
 
         // FontAwesome - brands
         FS.readdirSync(fontAwesomePathBrand).forEach(fileName => {
-
             that.createAndCopy(fileName, '', PATH.join(fontAwesomePathBrand, fileName));
         });
 
@@ -87,12 +86,8 @@ module.exports = {
             "\n}"
         ];
 
-        //var pathToBg = PATH.join(this.block, '_' + this.background, this.block + '_' + this.background + '_' + modVal + '.css');
-        //FS.writeFileSync(pathToBg, styleArr.join(''));
-
         FS.writeFileSync(PATH.join(this.block, '_' + this.background, this.block + '_' + this.background + '_' + modVal + '.css'), styleArr.join(''));
 
-        //this.copyFile(PATH.join(this.block, '_' + this.background, this.block + '_' + this.background +'_' + modVal + ".svg"), content);
         this.copyFile(realPath, PATH.join(this.block, '_' + this.background, this.block + '_' + this.background +'_' + modVal + ".svg"));
     },
 

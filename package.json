@@ -5,6 +5,7 @@
   "main": "generate.js",
   "scripts": {
     "build": "node generate",
+    "build-mmon": "node blast",
     "prepublish": "npm run build",
     "drop-cache": "rm -rf icon",
     "test": "npm run drop-cache && npm run build"
@@ -31,6 +32,7 @@
   "author": "b1tc0re <b1tc0re@yandex.ru>",
   "license": "MIT",
   "devDependencies": {
-    "@fortawesome/fontawesome-free": "^5.6.3"
+    "@fortawesome/fontawesome-free": "^5.8.2",
+    "font-blast": "^0.7.0"
   }
 }

@@ -5,7 +5,6 @@
   "main": "generate.js",
   "scripts": {
     "build": "node generate",
-    "build-mmon": "node blast",
     "prepublish": "npm run build",
     "drop-cache": "rm -rf icon",
     "test": "npm run drop-cache && npm run build"
